@@ -3,7 +3,9 @@ package andrew.pettigrew.comprehensive_api.services;
 import andrew.pettigrew.comprehensive_api.dtos.UserDto;
 import andrew.pettigrew.comprehensive_api.entities.User;
 import andrew.pettigrew.comprehensive_api.respositories.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +16,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    @Qualifier("skipNullModelMapper")
+    private ModelMapper modelMapper;
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -23,7 +29,8 @@ public class UserService {
     }
 
     public User createUser(UserDto userDto) {
-        User user = new User();
+
+        final User user =  modelMapper.map(userDto, User.class);
         return userRepository.save(user);
     }
 

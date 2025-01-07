@@ -1,8 +1,12 @@
 package andrew.pettigrew.comprehensive_api.dtos;
 
+import andrew.pettigrew.comprehensive_api.jsonapi.ResourceDto;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 
 @Setter
@@ -10,9 +14,24 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UserDto {
-    private UUID uuid;
+public class UserDto implements ResourceDto<UUID> {
+
+//    @JsonIgnore
+//    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+//    private UUID uuid;
+
+    @NotNull(message = "First name is required")
+    @Size(max = 255, message ="This field can only be 255 characters long")
     private String firstName;
+
+    @NotNull(message = "First name is required")
+    @Size(max = 255, message ="This field can only be 255 characters long")
     private String lastName;
+
+    @NotNull(message = "birthDate is required")
     private LocalDate birthDate;
+
+    private Date createdAt;
+    private Date updatedAt;
+    private Date deletedAt;
 }
