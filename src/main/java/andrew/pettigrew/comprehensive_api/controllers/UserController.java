@@ -7,7 +7,9 @@ import andrew.pettigrew.comprehensive_api.jsonapi.JsonApiConstants;
 import andrew.pettigrew.comprehensive_api.jsonapi.SingleResourceResponse;
 import andrew.pettigrew.comprehensive_api.jsonapi.UserResource;
 import andrew.pettigrew.comprehensive_api.jsonapi.requests.CreateRequest;
+import andrew.pettigrew.comprehensive_api.jsonapi.requests.UpdateRequest;
 import andrew.pettigrew.comprehensive_api.jsonapi.requests.UserCreateRequest;
+import andrew.pettigrew.comprehensive_api.jsonapi.requests.UserUpdateRequest;
 import andrew.pettigrew.comprehensive_api.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/" + ResourceTypes.USERS, produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
@@ -48,14 +51,12 @@ public class UserController {
         return new SingleResourceResponse<>(UserResource.toResource(user));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
-        try {
-            User updatedUser = userService.updateUser(id, userDto);
-            return ResponseEntity.ok(updatedUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @PatchMapping("/{uuid}")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public SingleResourceResponse<UserResource> updateUser(final @PathVariable UUID uuid, @RequestBody @Validated UpdateRequest<UserUpdateRequest> userDto) {
+
+        User updatedUser = userService.updateUser(uuid, userDto.getData().generateDto());
+        return new SingleResourceResponse<>(UserResource.toResource(updatedUser));
     }
 
     @DeleteMapping("/{id}")

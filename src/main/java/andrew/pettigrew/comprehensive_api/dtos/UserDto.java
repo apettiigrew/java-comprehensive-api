@@ -15,11 +15,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 public class UserDto implements ResourceDto<UUID> {
-
-//    @JsonIgnore
-//    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-//    private UUID uuid;
-
     @NotNull(message = "First name is required")
     @Size(max = 255, message ="This field can only be 255 characters long")
     private String firstName;

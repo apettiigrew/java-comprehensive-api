@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8.0
-    container_name: invoice-mysql-serivce
+    container_name: invoice-mysql-service
     restart: always
     ports:
       - "3306:3306"

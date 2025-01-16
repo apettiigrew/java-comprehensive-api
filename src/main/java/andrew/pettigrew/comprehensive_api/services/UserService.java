@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -34,10 +35,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateUser(Long id, UserDto userDetails) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        user.setFirstName(userDetails.getFirstName());
-        user.setLastName(userDetails.getLastName());
+    public User updateUser(UUID uuid, UserDto userDetails) {
+
+        User user = userRepository.findByUuidAndDeletedAtIsNull(uuid).orElseThrow(() -> new RuntimeException("User not found"));
+        modelMapper.map(userDetails,user);
         return userRepository.save(user);
     }
 
