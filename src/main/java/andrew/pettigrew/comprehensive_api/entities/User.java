@@ -28,13 +28,13 @@ public class User {
     @JdbcTypeCode(Types.CHAR)
     private UUID uuid;
 
-    @Column(nullable = false)
+    @Column(name="first_name", nullable = false)
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(name="last_name", nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
+    @Column(name="birth_date", nullable = false)
     private LocalDate birthDate;
 
     @Column(name="created_at")
