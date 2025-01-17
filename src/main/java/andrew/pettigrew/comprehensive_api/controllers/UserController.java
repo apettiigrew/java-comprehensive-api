@@ -4,6 +4,7 @@ import andrew.pettigrew.comprehensive_api.ResourceTypes;
 import andrew.pettigrew.comprehensive_api.dtos.UserDto;
 import andrew.pettigrew.comprehensive_api.entities.User;
 import andrew.pettigrew.comprehensive_api.jsonapi.JsonApiConstants;
+import andrew.pettigrew.comprehensive_api.jsonapi.MultipleResourceResponse;
 import andrew.pettigrew.comprehensive_api.jsonapi.SingleResourceResponse;
 import andrew.pettigrew.comprehensive_api.jsonapi.UserResource;
 import andrew.pettigrew.comprehensive_api.jsonapi.requests.CreateRequest;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/" + ResourceTypes.USERS, produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
@@ -30,16 +32,21 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+
+
+    @GetMapping("/{uuid}")
+    public SingleResourceResponse<UserResource> getUserByUuid(final @PathVariable("uuid") UUID uuid) {
+        User user = userService.getUserByUuid(uuid);
+        return new SingleResourceResponse<>(UserResource.toResource(user));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping
+    public MultipleResourceResponse<UserResource> getAllUsers() {
+        List<User> user = userService.getAllUsers();
+
+        return new MultipleResourceResponse<>(
+                user.stream().map(UserResource::toResource)
+                .collect(Collectors.toList()));
     }
 
     @PostMapping
@@ -54,7 +61,6 @@ public class UserController {
     @PatchMapping("/{uuid}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public SingleResourceResponse<UserResource> updateUser(final @PathVariable UUID uuid, @RequestBody @Validated UpdateRequest<UserUpdateRequest> userDto) {
-
         User updatedUser = userService.updateUser(uuid, userDto.getData().generateDto());
         return new SingleResourceResponse<>(UserResource.toResource(updatedUser));
     }
