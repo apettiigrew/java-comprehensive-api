@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,12 +38,15 @@ public class UserService {
 
     public User updateUser(UUID uuid, UserDto userDetails) {
 
-        User user = userRepository.findByUuidAndDeletedAtIsNull(uuid).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByUuid(uuid).orElseThrow(() -> new RuntimeException("User not found"));
         modelMapper.map(userDetails,user);
         return userRepository.save(user);
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public void deleteUser(UUID uuid) {
+        final var today = new Date();
+        User user = userRepository.findByUuid(uuid).orElseThrow(() -> new RuntimeException("User not found"));
+       user.setDeletedAt(today);
+        userRepository.save(user);
     }
 }
