@@ -4,6 +4,7 @@ import andrew.pettigrew.comprehensive_api.ResourceTypes;
 import andrew.pettigrew.comprehensive_api.dtos.UserDto;
 import andrew.pettigrew.comprehensive_api.entities.User;
 import andrew.pettigrew.comprehensive_api.jsonapi.JsonApiConstants;
+import andrew.pettigrew.comprehensive_api.jsonapi.MultipleResourceResponse;
 import andrew.pettigrew.comprehensive_api.jsonapi.SingleResourceResponse;
 import andrew.pettigrew.comprehensive_api.jsonapi.UserResource;
 import andrew.pettigrew.comprehensive_api.jsonapi.requests.CreateRequest;
@@ -13,13 +14,18 @@ import andrew.pettigrew.comprehensive_api.jsonapi.requests.UserUpdateRequest;
 import andrew.pettigrew.comprehensive_api.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/" + ResourceTypes.USERS, produces = JsonApiConstants.JSON_API_CONTENT_TYPE)
@@ -30,16 +36,25 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    @GetMapping("/{uuid}")
+    public SingleResourceResponse<UserResource> getUserByUuid(final @PathVariable("uuid") UUID uuid) {
+        User user = userService.getUserByUuid(uuid);
+        return new SingleResourceResponse<>(UserResource.toResource(user));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping
+    public MultipleResourceResponse<UserResource> getAllUsers(@PageableDefault(size = 10, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
+        Page<User> users = userService.getAllUsers(pageable);
+
+        final Page<UserResource> userResourcePage = new PageImpl<>(
+                users.getContent()
+                        .stream()
+                        .map(UserResource::toResource)
+                        .collect(Collectors.toList()),
+                users.getPageable(),
+                users.getTotalElements()
+        );
+        return new MultipleResourceResponse<>(userResourcePage);
     }
 
     @PostMapping
@@ -54,7 +69,6 @@ public class UserController {
     @PatchMapping("/{uuid}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public SingleResourceResponse<UserResource> updateUser(final @PathVariable UUID uuid, @RequestBody @Validated UpdateRequest<UserUpdateRequest> userDto) {
-
         User updatedUser = userService.updateUser(uuid, userDto.getData().generateDto());
         return new SingleResourceResponse<>(UserResource.toResource(updatedUser));
     }
