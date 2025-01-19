@@ -6,10 +6,11 @@ import andrew.pettigrew.comprehensive_api.respositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -21,8 +22,8 @@ public class UserService {
     @Qualifier("skipNullModelMapper")
     private ModelMapper modelMapper;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public Page<User> getAllUsers(Pageable pageable ) {
+        return userRepository.findAll(pageable);
     }
 
     public User getUserByUuid(UUID uuid) {

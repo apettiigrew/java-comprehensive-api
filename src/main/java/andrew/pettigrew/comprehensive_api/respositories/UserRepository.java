@@ -15,6 +15,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT u.* FROM users u where u.uuid = :uuid AND u.deleted_at is NULL",
             nativeQuery = true)
     Optional<User> findByUuid(@Param("uuid") UUID uuid);
-    void deleteByUuid(UUID uuid);
 
 }

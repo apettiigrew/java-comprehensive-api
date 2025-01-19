@@ -14,12 +14,16 @@ import andrew.pettigrew.comprehensive_api.jsonapi.requests.UserUpdateRequest;
 import andrew.pettigrew.comprehensive_api.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,8 +36,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
-
     @GetMapping("/{uuid}")
     public SingleResourceResponse<UserResource> getUserByUuid(final @PathVariable("uuid") UUID uuid) {
         User user = userService.getUserByUuid(uuid);
@@ -41,12 +43,18 @@ public class UserController {
     }
 
     @GetMapping
-    public MultipleResourceResponse<UserResource> getAllUsers() {
-        List<User> user = userService.getAllUsers();
+    public MultipleResourceResponse<UserResource> getAllUsers(@PageableDefault(size = 10, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
+        Page<User> users = userService.getAllUsers(pageable);
 
-        return new MultipleResourceResponse<>(
-                user.stream().map(UserResource::toResource)
-                .collect(Collectors.toList()));
+        final Page<UserResource> userResourcePage = new PageImpl<>(
+                users.getContent()
+                        .stream()
+                        .map(UserResource::toResource)
+                        .collect(Collectors.toList()),
+                users.getPageable(),
+                users.getTotalElements()
+        );
+        return new MultipleResourceResponse<>(userResourcePage);
     }
 
     @PostMapping
