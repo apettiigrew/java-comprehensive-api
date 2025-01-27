@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.UniqueElements;
 
 
 import java.sql.Types;
@@ -22,11 +23,16 @@ import java.util.UUID;
 @Table(name = "users")
 public class User {
 
-    @Id
+//    @Id
     @Column(nullable = false,unique = true)
-    @GeneratedValue(strategy = GenerationType.UUID)
+//    @GeneratedValue(strategy = GenerationType.UUID)
     @JdbcTypeCode(Types.CHAR)
     private UUID uuid;
+
+    @Id
+    @Column(name="username", nullable = false)
+    @UniqueElements
+    private String username;
 
     @Column(name="first_name", nullable = false)
     private String firstName;
