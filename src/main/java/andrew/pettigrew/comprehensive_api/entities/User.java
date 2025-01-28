@@ -42,6 +42,9 @@ public class User {
     @Column(name="password", nullable = false)
     private String password;
 
+    @Column(name="role", nullable = false)
+    private String role;
+
     @Column(name="enabled", nullable = false)
     private Boolean enabled;
 

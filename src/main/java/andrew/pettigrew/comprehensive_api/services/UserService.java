@@ -1,6 +1,7 @@
 package andrew.pettigrew.comprehensive_api.services;
 
 import andrew.pettigrew.comprehensive_api.dtos.UserDto;
+import andrew.pettigrew.comprehensive_api.dtos.UserRegisterDto;
 import andrew.pettigrew.comprehensive_api.entities.User;
 import andrew.pettigrew.comprehensive_api.respositories.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -32,6 +33,11 @@ public class UserService {
 
     public User createUser(UserDto userDto) {
         final User user =  modelMapper.map(userDto, User.class);
+        return userRepository.save(user);
+    }
+
+    public User registerUser(UserRegisterDto userRegisterDto) {
+        final User user =  modelMapper.map(userRegisterDto, User.class);
         return userRepository.save(user);
     }
 
