@@ -1,7 +1,7 @@
 package andrew.pettigrew.comprehensive_api.services;
 
 import andrew.pettigrew.comprehensive_api.dtos.UserDto;
-import andrew.pettigrew.comprehensive_api.entities.User;
+import andrew.pettigrew.comprehensive_api.entities.AppUser;
 import andrew.pettigrew.comprehensive_api.respositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,28 +22,28 @@ public class UserService {
     @Qualifier("skipNullModelMapper")
     private ModelMapper modelMapper;
 
-    public Page<User> getAllUsers(Pageable pageable ) {
+    public Page<AppUser> getAllUsers(Pageable pageable ) {
         return userRepository.findAll(pageable);
     }
 
-    public User getUserByUuid(UUID uuid) {
+    public AppUser getUserByUuid(UUID uuid) {
         return userRepository.findByUuid(uuid).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public User createUser(UserDto userDto) {
-        final User user =  modelMapper.map(userDto, User.class);
+    public AppUser createUser(UserDto userDto) {
+        final AppUser user =  modelMapper.map(userDto, AppUser.class);
         return userRepository.save(user);
     }
 
-    public User updateUser(UUID uuid, UserDto userDetails) {
-        User user = userRepository.findByUuid(uuid).orElseThrow(() -> new RuntimeException("User not found"));
+    public AppUser updateUser(UUID uuid, UserDto userDetails) {
+        AppUser user = userRepository.findByUuid(uuid).orElseThrow(() -> new RuntimeException("User not found"));
         modelMapper.map(userDetails,user);
         return userRepository.save(user);
     }
 
     public void deleteUser(UUID uuid) {
         final var today = new Date();
-        User user = userRepository.findByUuid(uuid).orElseThrow(() -> new RuntimeException("User not found"));
+        AppUser user = userRepository.findByUuid(uuid).orElseThrow(() -> new RuntimeException("User not found"));
        user.setDeletedAt(today);
         userRepository.save(user);
     }
