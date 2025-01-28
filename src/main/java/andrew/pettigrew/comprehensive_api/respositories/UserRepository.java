@@ -16,4 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             nativeQuery = true)
     Optional<User> findByUuid(@Param("uuid") UUID uuid);
 
+    @Query(value = "SELECT u.* FROM users u where u.username = :username AND u.deleted_at is NULL",
+            nativeQuery = true)
+    Optional<User> findByUserName(@Param("username") String username);
 }

@@ -8,9 +8,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.UniqueElements;
 
-
 import java.sql.Types;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -20,8 +18,8 @@ import java.util.UUID;
 @Setter
 @ToString
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "customers")
+public class Customer {
 
     @Id
     @Column(nullable = false,unique = true)
@@ -29,24 +27,10 @@ public class User {
     @JdbcTypeCode(Types.CHAR)
     private UUID uuid;
 
+    @Id
     @Column(name="username", nullable = false)
     @UniqueElements
     private String username;
-
-    @Column(name="first_name", nullable = false)
-    private String firstName;
-
-    @Column(name="last_name", nullable = false)
-    private String lastName;
-
-    @Column(name="password", nullable = false)
-    private String password;
-
-    @Column(name="enabled", nullable = false)
-    private Boolean enabled;
-
-    @Column(name="birth_date", nullable = false)
-    private LocalDate birthDate;
 
     @Column(name="created_at")
     @CreationTimestamp

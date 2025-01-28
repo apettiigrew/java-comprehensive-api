@@ -1,11 +1,14 @@
 CREATE TABLE users (
-    uuid CHAR(36) NOT NULL PRIMARY KEY, -- UUID stored as a CHAR(36) for readability
-    first_name VARCHAR(255) NOT NULL,   -- First name, required
-    last_name VARCHAR(255) NOT NULL,    -- Last name, required
-    birth_date DATE NOT NULL,           -- Birthdate, required
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Automatically set creation timestamp
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Automatically update timestamp
-    deleted_at DATETIME NULL            -- Timestamp for soft deletion, nullable
+    uuid CHAR(36) NOT NULL primary key,
+    username VARCHAR(50) not null,
+    password VARCHAR(255) not null,
+    enabled boolean not null,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    birth_date DATE NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at DATETIME NULL
 );
 
 CREATE INDEX idx_users_deleted_at on users(uuid, deleted_at)
