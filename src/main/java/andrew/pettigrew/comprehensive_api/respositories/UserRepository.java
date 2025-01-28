@@ -1,6 +1,6 @@
 package andrew.pettigrew.comprehensive_api.respositories;
 
-import andrew.pettigrew.comprehensive_api.entities.AppUser;
+import andrew.pettigrew.comprehensive_api.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,14 +10,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<AppUser, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT u.* FROM users u where u.uuid = :uuid AND u.deleted_at is NULL",
             nativeQuery = true)
-    Optional<AppUser> findByUuid(@Param("uuid") UUID uuid);
+    Optional<User> findByUuid(@Param("uuid") UUID uuid);
 
     @Query(value = "SELECT u.* FROM users u where u.username = :username AND u.deleted_at is NULL",
             nativeQuery = true)
-    Optional<AppUser> findByUserName(@Param("username") String username);
-
+    Optional<User> findByUserName(@Param("username") String username);
 }
