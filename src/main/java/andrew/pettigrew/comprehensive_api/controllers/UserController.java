@@ -2,13 +2,15 @@ package andrew.pettigrew.comprehensive_api.controllers;
 
 import andrew.pettigrew.comprehensive_api.ResourceTypes;
 import andrew.pettigrew.comprehensive_api.dtos.UserDto;
-import andrew.pettigrew.comprehensive_api.dtos.UserRegisterDto;
 import andrew.pettigrew.comprehensive_api.entities.User;
 import andrew.pettigrew.comprehensive_api.jsonapi.JsonApiConstants;
 import andrew.pettigrew.comprehensive_api.jsonapi.MultipleResourceResponse;
 import andrew.pettigrew.comprehensive_api.jsonapi.SingleResourceResponse;
 import andrew.pettigrew.comprehensive_api.jsonapi.UserResource;
-import andrew.pettigrew.comprehensive_api.jsonapi.requests.*;
+import andrew.pettigrew.comprehensive_api.jsonapi.requests.CreateRequest;
+import andrew.pettigrew.comprehensive_api.jsonapi.requests.UpdateRequest;
+import andrew.pettigrew.comprehensive_api.jsonapi.requests.UserCreateRequest;
+import andrew.pettigrew.comprehensive_api.jsonapi.requests.UserUpdateRequest;
 import andrew.pettigrew.comprehensive_api.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,9 +35,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/{uuid}")
     public SingleResourceResponse<UserResource> getUserByUuid(final @PathVariable("uuid") UUID uuid) {
@@ -57,19 +55,6 @@ public class UserController {
                 users.getTotalElements()
         );
         return new MultipleResourceResponse<>(userResourcePage);
-    }
-
-    @PostMapping("/register")
-    @ResponseStatus(code = HttpStatus.CREATED)
-    public SingleResourceResponse<UserResource> registerUser(final @RequestBody @Validated CreateRequest<UserRegisterRequest> requestData) {
-        UserRegisterDto userRegisterDto = requestData.getData().generateDto();
-
-        String hashedPassword = passwordEncoder.encode(userRegisterDto.getPassword());
-        userRegisterDto.setPassword(hashedPassword);
-
-        final var user = userService.registerUser(userRegisterDto);
-
-        return new SingleResourceResponse<>(UserResource.toResource(user));
     }
 
     @PostMapping

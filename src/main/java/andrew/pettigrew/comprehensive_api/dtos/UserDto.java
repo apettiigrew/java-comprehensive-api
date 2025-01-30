@@ -23,6 +23,9 @@ public class UserDto implements ResourceDto<UUID> {
     @Size(max = 255, message ="This field can only be 255 characters long")
     private String lastName;
 
+    @NotNull(message = "Role is required")
+    @Size(max = 255, message ="This field can only be 255 characters long")
+    private String role;
 
     @NotNull(message = "birthDate is required")
     private LocalDate birthDate;
