@@ -27,10 +27,15 @@ public class Customer {
     @JdbcTypeCode(Types.CHAR)
     private UUID uuid;
 
-    @Id
     @Column(name="username", nullable = false)
     @UniqueElements
     private String username;
+
+    @Column(name="role", nullable = false)
+    private String role;
+
+    @Column(name="password", nullable = false)
+    private String password;
 
     @Column(name="created_at")
     @CreationTimestamp

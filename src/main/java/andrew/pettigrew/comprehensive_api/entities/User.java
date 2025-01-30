@@ -6,8 +6,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.UniqueElements;
-
 
 import java.sql.Types;
 import java.time.LocalDate;
@@ -30,7 +28,6 @@ public class User {
     private UUID uuid;
 
     @Column(name="username", nullable = false)
-    @UniqueElements
     private String username;
 
     @Column(name="first_name", nullable = false)
@@ -42,8 +39,11 @@ public class User {
     @Column(name="password", nullable = false)
     private String password;
 
+    @Column(name="role", nullable = false)
+    private String role;
+
     @Column(name="enabled", nullable = false)
-    private Boolean enabled;
+    private Boolean enabled = true;
 
     @Column(name="birth_date", nullable = false)
     private LocalDate birthDate;
