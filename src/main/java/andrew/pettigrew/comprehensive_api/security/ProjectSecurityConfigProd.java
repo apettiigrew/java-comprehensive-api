@@ -1,7 +1,6 @@
 package andrew.pettigrew.comprehensive_api.security;
 
 
-import andrew.pettigrew.comprehensive_api.exceptions.CustomBasicAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -17,18 +16,18 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@Profile("!prod")
-public class ProjectSecurityConfig {
+@Profile("prod")
+public class ProjectSecurityConfigProd {
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.requiresChannel(rcc -> rcc.anyRequest().requiresInsecure()); // Only HTTPS
+        http.requiresChannel(rcc -> rcc.anyRequest().requiresSecure()); // Only HTTPS
         http.csrf(csrfConfig -> csrfConfig.disable())
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards").authenticated()
                         .requestMatchers( "/error", "/api/register").permitAll());
         http.formLogin(withDefaults());
-        http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
+        http.httpBasic(withDefaults());
         return http.build();
     }
 
