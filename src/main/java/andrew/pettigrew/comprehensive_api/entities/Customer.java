@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.UniqueElements;
 
 import java.sql.Types;
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -36,6 +37,9 @@ public class Customer {
 
     @Column(name="password", nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+    Set<Authority> authorities;
 
     @Column(name="created_at")
     @CreationTimestamp
