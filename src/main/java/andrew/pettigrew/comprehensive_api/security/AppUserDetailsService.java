@@ -1,7 +1,5 @@
 package andrew.pettigrew.comprehensive_api.security;
 
-import andrew.pettigrew.comprehensive_api.entities.Customer;
-import andrew.pettigrew.comprehensive_api.respositories.CustomerRepository;
 import andrew.pettigrew.comprehensive_api.respositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +21,12 @@ public class AppUserDetailsService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    CustomerRepository customerRepository;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Customer customer = customerRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        List<GrantedAuthority> authorities = customer.getAuthorities().stream().map(authority -> new
+        andrew.pettigrew.comprehensive_api.entities.User user = userRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        List<GrantedAuthority> authorities = user.getAuthorities().stream().map(authority -> new
                 SimpleGrantedAuthority(authority.getName())).collect(Collectors.toList());
 
-        return new User(customer.getUsername(), customer.getPassword(), authorities);
+        return new User(user.getUsername(), user.getPassword(), authorities);
     }
 }

@@ -14,8 +14,8 @@ public class Authority {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "customer_uuid", nullable = false)
-    Customer customer;
+    @JoinColumn(name = "user_uuid", nullable = false)
+    User user;
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;

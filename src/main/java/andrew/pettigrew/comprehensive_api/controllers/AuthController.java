@@ -13,7 +13,9 @@ import io.jsonwebtoken.security.Keys;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -56,7 +58,7 @@ public class AuthController {
 
     @PostMapping("/login")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public TokenResource loginUsers(final @RequestBody @Validated CreateRequest<UserLoginRequest> loginRequest) {
+    public ResponseEntity<TokenResource> loginUsers(final @RequestBody @Validated CreateRequest<UserLoginRequest> loginRequest) {
         UserLoginDto uerLoginDto = loginRequest.getData().generateDto();
         String jwt = "";
         Authentication authentication = UsernamePasswordAuthenticationToken.unauthenticated(uerLoginDto.getUsername(),
@@ -77,8 +79,11 @@ public class AuthController {
             }
         }
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorizatoin", jwt);
+
         var response = new LoginResponseDto(HttpStatus.OK.getReasonPhrase(), jwt);
-        return TokenResource.toResource(response);
+        return new ResponseEntity<>(TokenResource.toResource(response), headers, HttpStatus.OK);
     }
 
 }
