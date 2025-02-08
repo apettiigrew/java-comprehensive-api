@@ -1,6 +1,7 @@
 package andrew.pettigrew.comprehensive_api.dtos;
 
 import andrew.pettigrew.comprehensive_api.jsonapi.ResourceDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -24,12 +25,13 @@ public class UserDto implements ResourceDto<UUID> {
     private String lastName;
 
     @NotNull(message = "Role is required")
-    @Size(max = 255, message ="This field can only be 255 characters long")
+    @Size(max = 255, message = "This field can only be 255 characters long")
     private String role;
 
     @NotNull(message = "birthDate is required")
     private LocalDate birthDate;
 
+    @JsonIgnore
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;

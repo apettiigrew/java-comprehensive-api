@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.sql.Types;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -41,6 +42,9 @@ public class User {
 
     @Column(name="role", nullable = false)
     private String role;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    Set<Authority> authorities;
 
     @Column(name="enabled", nullable = false)
     private Boolean enabled = true;

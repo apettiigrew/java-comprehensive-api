@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,8 @@ public class AppUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         andrew.pettigrew.comprehensive_api.entities.User user = userRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole()));
+        List<GrantedAuthority> authorities = user.getAuthorities().stream().map(authority -> new
+                SimpleGrantedAuthority(authority.getName())).collect(Collectors.toList());
 
         return new User(user.getUsername(), user.getPassword(), authorities);
     }
