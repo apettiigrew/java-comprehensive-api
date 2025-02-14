@@ -23,7 +23,7 @@ public class ComprehensiveApiApplication {
 	 * @return a configured ModelMapper instance
 	 */
 	@Primary
-	public ModelMapper modelMapper(){
+	public ModelMapper modelMapper() {
 		final var mapper = new ModelMapper();
 		mapper.getConfiguration()
 				.setMatchingStrategy(MatchingStrategies.STRICT)

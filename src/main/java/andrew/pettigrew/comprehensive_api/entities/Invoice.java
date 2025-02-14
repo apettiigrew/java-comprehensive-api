@@ -23,8 +23,8 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.DETACH})
+    @JoinColumn(name = "user_uuid", nullable = false)
     private User user;
 
     @Column(name = "payment_due", nullable = false)
