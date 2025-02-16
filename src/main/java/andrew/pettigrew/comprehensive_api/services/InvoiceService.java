@@ -5,6 +5,8 @@ import andrew.pettigrew.comprehensive_api.entities.Invoice;
 import andrew.pettigrew.comprehensive_api.entities.User;
 import andrew.pettigrew.comprehensive_api.respositories.InvoiceRepository;
 import andrew.pettigrew.comprehensive_api.respositories.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,10 +40,18 @@ public class InvoiceService {
     }
 
     public Invoice createInvoice(InvoiceDto invoiceDto) {
+        ObjectMapper objectMapper = new ObjectMapper();
         User user = userRepository.findByUuid(UUID.fromString(invoiceDto.getUserUuid())).orElseThrow(() -> new RuntimeException("User not found"));
 
         Invoice invoice = modelMapper.map(invoiceDto, Invoice.class);
         invoice.setUser(user);
+
+        try {
+            invoice.setSenderAddress(objectMapper.writeValueAsString(invoiceDto.getSenderAddress()));
+            invoice.setClientAddress(objectMapper.writeValueAsString(invoiceDto.getClientAddress()));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         return invoiceRepository.save(invoice);
     }
