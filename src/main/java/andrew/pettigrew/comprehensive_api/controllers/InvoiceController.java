@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,5 +69,16 @@ public class InvoiceController {
 
         Invoice updatedInvoice = invoiceService.updateInvoice(id, invoiceDto);
         return new SingleResourceResponse<>(InvoiceResource.toResource(updatedInvoice));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> deleteUser(final @PathVariable Integer id) {
+        try {
+            invoiceService.deleteInvoice(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
