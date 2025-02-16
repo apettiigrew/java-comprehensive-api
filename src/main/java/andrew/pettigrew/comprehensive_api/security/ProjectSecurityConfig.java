@@ -3,7 +3,8 @@ package andrew.pettigrew.comprehensive_api.security;
 
 import andrew.pettigrew.comprehensive_api.exceptions.CustomAccessDeniedHandler;
 import andrew.pettigrew.comprehensive_api.exceptions.CustomBasicAuthenticationEntryPoint;
-import andrew.pettigrew.comprehensive_api.security.filter.CsrfCookieFilter;
+import andrew.pettigrew.comprehensive_api.security.filter.JWTTokenGeneratorFilter;
+import andrew.pettigrew.comprehensive_api.security.filter.JWTTokenValidatorFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,12 +21,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -36,9 +36,7 @@ public class ProjectSecurityConfig {
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
-        http.securityContext(contextConfig -> contextConfig.requireExplicitSave(false))
-                .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+        http.sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsConfig -> corsConfig.configurationSource(new CorsConfigurationSource() {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
@@ -47,22 +45,18 @@ public class ProjectSecurityConfig {
                         config.setAllowedMethods(Collections.singletonList("*"));
                         config.setAllowCredentials(true);
                         config.setAllowedHeaders(Collections.singletonList("*"));
+                        config.setExposedHeaders(List.of("Authorization"));
                         config.setMaxAge(3600L);
                         return config;
                     }
                 }))
-//        With the given configuration of Spring Security, we can let the framework to generate a
-//        random CSRF token which can be sent to Ul after successful login. The same taken need to be sent by
-//        Ul for every subsequent requests it is making to backend. For certain paths, we can disable CSRF
-//        with the help of ignoringRequestMatchers.
-                .csrf(csrfConfig -> csrfConfig.csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
-                        .ignoringRequestMatchers("/api/register","/api/login")
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-                .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+                .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure()) // Only HTTP
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/api/user/*").authenticated()
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/api/users/**","/api/invoices","/api/invoices/**").authenticated()
                         .requestMatchers("/api/register","/api/login").permitAll());
+        http.csrf((csrf) -> csrf.disable());
         http.formLogin(withDefaults());
         http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
         http.exceptionHandling(ehc -> ehc.accessDeniedHandler(new CustomAccessDeniedHandler()));

@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.sql.Types;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,6 +46,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     Set<Authority> authorities;
+
+    @OneToMany(mappedBy ="user", targetEntity = Invoice.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Invoice> invoices;
 
     @Column(name="enabled", nullable = false)
     private Boolean enabled = true;

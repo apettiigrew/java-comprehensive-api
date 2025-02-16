@@ -34,29 +34,28 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (null != authentication) {
             Environment env = getEnvironment();
-            if (null != env) {
-                String secret = env.getProperty(ApplicationConstants.JWT_SECRET_KEY,
-                        ApplicationConstants.JWT_SECRET_DEFAULT_VALUE);
+            String secret = env.getProperty(ApplicationConstants.JWT_SECRET_KEY,
+                    ApplicationConstants.JWT_SECRET_DEFAULT_VALUE);
 
-                byte[] keyBytes = Decoders.BASE64.decode(secret);
-                SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes);
+            byte[] keyBytes = Decoders.BASE64.decode(secret);
+            SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes);
 
-
-                String jwt = Jwts.builder().setIssuer("java-comprehensive-api").setSubject("JWT Token")
-                        .claim("username", authentication.getName())
-                        .claim("authorities", authentication.getAuthorities().stream().map(
-                                GrantedAuthority::getAuthority).collect(Collectors.joining(",")))
-                        .setIssuedAt(new Date())
-                        .setExpiration(new Date((new Date()).getTime() + 30000000))
-                        .signWith(SignatureAlgorithm.HS256, secretKey).compact();
-                response.setHeader(ApplicationConstants.JWT_HEADER, jwt);
-            }
+            String jwt = Jwts.builder().issuer("java-comprehensive-api").subject("JWT Token")
+                    .claim("username", authentication.getName())
+                    .claim("authorities", authentication.getAuthorities().stream().map(
+                            GrantedAuthority::getAuthority).collect(Collectors.joining(",")))
+                    .issuedAt(new Date())
+                    .expiration(new Date((new Date()).getTime() + 30000000))
+                    .signWith(secretKey, SignatureAlgorithm.HS256).compact();
+            
+            response.setHeader(ApplicationConstants.JWT_HEADER, jwt);
         }
         filterChain.doFilter(request, response);
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return !request.getServletPath().equals("/user");
+        // if path is not login
+        return !request.getServletPath().equals("/api/login");
     }
 }
