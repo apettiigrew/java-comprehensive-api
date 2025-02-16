@@ -42,10 +42,7 @@
 									"// const xsrfToken = pm.cookies.get(\"XSRF-TOKEN\");",
 									"// pm.collectionVariables.set(\"csrf_token\", xsrfToken);",
 									"",
-									"pm.request.headers.add({",
-									"    key: \"Authorization\",",
-									"    value: token",
-									"});",
+									"",
 									""
 								],
 								"type": "text/javascript",
@@ -222,7 +219,7 @@
 							"variable": [
 								{
 									"key": "uuid",
-									"value": "27970a83-1aa5-4499-a690-c4acfd1a6832"
+									"value": "08054770-5525-4519-94d8-c845deecff1c"
 								}
 							]
 						}
@@ -253,6 +250,31 @@
 					},
 					"response": []
 				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"pm.request.headers.add({",
+							"    key: \"Authorization\",",
+							"    value: pm.collectionVariables.get(\"jwt_token\")",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
 			]
 		},
 		{
@@ -265,13 +287,7 @@
 							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwt_token}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"data\": {\n        \"type\": \"invoices\",\n        \"attributes\": {\n            \"userUuid\": \"08054770-5525-4519-94d8-c845deecff1c\",\n             \"paymentDue\": \"2024-03-15\",\n             \"description\": \"Invoice for services rendered\",\n            \"paymentTerms\": 30,\n            \"clientName\": \"Acme Corporation\",\n            \"clientEmail\": \"info@acme.com\",\n            \"status\": \"DRAFT\",\n            \"total\": 1250.50,\n            \"senderAddress\": {\n                \"street\": \"123 Main St\",\n                \"city\": \"Anytown\",\n                \"state\": \"CA\",\n                \"zip\": \"91234\"\n            },\n            \"clientAddress\": {\n                \"street\": \"456 Oak Ave\",\n                \"city\": \"Springfield\",\n                \"state\": \"IL\",\n                \"zip\": \"62704\"\n            }\n        }\n    }\n}",
@@ -295,18 +311,24 @@
 				},
 				{
 					"name": "get all invoices",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "noauth"
 						},
 						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwt_token}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"url": {
 							"raw": "{{base_url}}/invoices?page=0&size=10",
 							"host": [
@@ -348,12 +370,94 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": ""
+									"value": "11"
 								}
 							]
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "get single invoice Copy",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"invoices\",\n        \"attributes\": {\n            \"userUuid\": \"08054770-5525-4519-94d8-c845deecff1c\",\n            \"paymentDue\": \"2024-03-15\",\n            \"description\": \"updated description\",\n            \"paymentTerms\": 30\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/invoices/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoices",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "11"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-users Copy",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/invoices/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoices",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "11"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"pm.request.headers.add({",
+							"    key: \"Authorization\",",
+							"    value: pm.collectionVariables.get(\"jwt_token\")",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		}
