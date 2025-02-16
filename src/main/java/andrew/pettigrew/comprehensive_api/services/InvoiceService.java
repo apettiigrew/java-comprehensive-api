@@ -57,8 +57,18 @@ public class InvoiceService {
         return invoiceRepository.save(invoice);
     }
 
-    public Invoice updateInvoice(Invoice invoice) {
-        return invoiceRepository.save(invoice); // Save handles both insert and update based on ID
+    public Invoice updateInvoice(Integer id, InvoiceDto invoiceDto) {
+        Invoice existingInvoice = invoiceRepository.findById(id).orElseThrow(() -> new RuntimeException("Invoice not found"));
+        ObjectMapper objectMapper = new ObjectMapper();
+        modelMapper.map(invoiceDto,existingInvoice);
+        try {
+            existingInvoice.setSenderAddress(objectMapper.writeValueAsString(invoiceDto.getSenderAddress()));
+            existingInvoice.setClientAddress(objectMapper.writeValueAsString(invoiceDto.getClientAddress()));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+       return invoiceRepository.save(existingInvoice);
     }
 
     public void deleteInvoice(Integer id) {

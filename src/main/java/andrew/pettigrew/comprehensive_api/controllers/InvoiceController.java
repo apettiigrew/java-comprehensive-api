@@ -9,6 +9,7 @@ import andrew.pettigrew.comprehensive_api.jsonapi.MultipleResourceResponse;
 import andrew.pettigrew.comprehensive_api.jsonapi.SingleResourceResponse;
 import andrew.pettigrew.comprehensive_api.jsonapi.requests.CreateRequest;
 import andrew.pettigrew.comprehensive_api.jsonapi.requests.InvoiceCreateRequest;
+import andrew.pettigrew.comprehensive_api.jsonapi.requests.UpdateRequest;
 import andrew.pettigrew.comprehensive_api.services.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -58,5 +59,14 @@ public class InvoiceController {
     public SingleResourceResponse<InvoiceResource> getInvoiceById(final @PathVariable("id") Integer id) {
         Invoice invoice = invoiceService.getInvoiceById(id);
         return new SingleResourceResponse<>(InvoiceResource.toResource(invoice));
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public SingleResourceResponse<InvoiceResource> updateUser(final @PathVariable Integer id, @RequestBody @Validated UpdateRequest<InvoiceCreateRequest> requestData) {
+        InvoiceDto invoiceDto = requestData.getData().generateDto();
+
+        Invoice updatedInvoice = invoiceService.updateInvoice(id, invoiceDto);
+        return new SingleResourceResponse<>(InvoiceResource.toResource(updatedInvoice));
     }
 }
