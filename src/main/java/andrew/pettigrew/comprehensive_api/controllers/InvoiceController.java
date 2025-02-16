@@ -53,4 +53,10 @@ public class InvoiceController {
         );
         return new MultipleResourceResponse<>(invoiceResourcePage);
     }
+
+    @GetMapping("/{id}")
+    public SingleResourceResponse<InvoiceResource> getInvoiceById(final @PathVariable("id") Integer id) {
+        Invoice invoice = invoiceService.getInvoiceById(id);
+        return new SingleResourceResponse<>(InvoiceResource.toResource(invoice));
+    }
 }

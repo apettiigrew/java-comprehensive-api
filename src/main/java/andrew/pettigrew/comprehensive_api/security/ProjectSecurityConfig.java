@@ -54,7 +54,7 @@ public class ProjectSecurityConfig {
                 .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure()) // Only HTTP
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/api/users/**","/api/invoices","/api/invoices/**").authenticated()
+                        .requestMatchers("/api/users/**","/api/invoices/**").authenticated()
                         .requestMatchers("/api/register","/api/login").permitAll());
         http.csrf((csrf) -> csrf.disable());
         http.formLogin(withDefaults());

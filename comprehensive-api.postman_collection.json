@@ -1,0 +1,394 @@
+{
+	"info": {
+		"_postman_id": "3e69ec68-50af-4503-8688-1982ed05c422",
+		"name": "comprehensive-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2045835"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "login-users",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.response.json();",
+									"var token = data.attributes.jwt;",
+									"if (token) {",
+									"    // Store the 1token in a global variable",
+									"    pm.collectionVariables.set(\"jwt_token\", token);",
+									"    ",
+									"    // Log token for debugging",
+									"    console.log(\"JWT Token stored:\", token);",
+									"} else {",
+									"    console.log(\"No token found in response\");",
+									"}",
+									"",
+									"// // set csrf token ",
+									"// const xsrfToken = pm.cookies.get(\"XSRF-TOKEN\");",
+									"// pm.collectionVariables.set(\"csrf_token\", xsrfToken);",
+									"",
+									"pm.request.headers.add({",
+									"    key: \"Authorization\",",
+									"    value: token",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"username\":\"petti@gmail.com\",\n      \"password\": \"123456\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register-users",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"username\":\"petti@gmail.com\",\n      \"firstName\": \"Andrew\",\n      \"lastName\": \"Pettigrew\",\n      \"password\": \"123456\",\n      \"role\":\"read\",\n      \"birthDate\": \"2000-01-01\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "create-users",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"firstName\": \"Andrew\",\n      \"lastName\": \"Pettigrew\",\n      \"birthDate\": \"2000-01-01\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-users",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"type\": \"users\",\n    \"attributes\": {\n      \"firstName\": \"Name was updated\",\n      \"lastName\": \"Last Name\",\n      \"birthDate\": \"1993-09-14\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/:uuid",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								":uuid"
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "258d9732-ae13-4011-bfa6-11a8419be343"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all users",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users?page=0&size=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0",
+									"description": "Page number"
+								},
+								{
+									"key": "size",
+									"value": "10",
+									"description": "Number items on page."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get single user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/:uuid",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								":uuid"
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "27970a83-1aa5-4499-a690-c4acfd1a6832"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-users",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/:uuid",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								":uuid"
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "258d9732-ae13-4011-bfa6-11a8419be343"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "invoice",
+			"item": [
+				{
+					"name": "create invoice",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"type\": \"invoices\",\n        \"attributes\": {\n            \"userUuid\": \"08054770-5525-4519-94d8-c845deecff1c\",\n             \"paymentDue\": \"2024-03-15\",\n             \"description\": \"Invoice for services rendered\",\n            \"paymentTerms\": 30,\n            \"clientName\": \"Acme Corporation\",\n            \"clientEmail\": \"info@acme.com\",\n            \"status\": \"DRAFT\",\n            \"total\": 1250.50,\n            \"senderAddress\": {\n                \"street\": \"123 Main St\",\n                \"city\": \"Anytown\",\n                \"state\": \"CA\",\n                \"zip\": \"91234\"\n            },\n            \"clientAddress\": {\n                \"street\": \"456 Oak Ave\",\n                \"city\": \"Springfield\",\n                \"state\": \"IL\",\n                \"zip\": \"62704\"\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/invoices",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all invoices",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/invoices?page=0&size=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoices"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0",
+									"description": "Page number"
+								},
+								{
+									"key": "size",
+									"value": "10",
+									"description": "Number items on page."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get single invoice",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/invoices/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"invoices",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080/api",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": ""
+		}
+	]
+}
