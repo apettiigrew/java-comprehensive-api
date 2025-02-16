@@ -18,13 +18,12 @@ import java.util.Date;
 @Entity
 @Table(name = "invoices")
 public class Invoice {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.DETACH})
-    @JoinColumn(name = "user_uuid", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.REFRESH})
+    @JoinColumn(name = "user_uuid", referencedColumnName = "uuid", nullable = false)
     private User user;
 
     @Column(name = "payment_due", nullable = false)

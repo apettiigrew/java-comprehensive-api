@@ -2,13 +2,15 @@ package andrew.pettigrew.comprehensive_api.controllers;
 
 import andrew.pettigrew.comprehensive_api.ResourceTypes;
 import andrew.pettigrew.comprehensive_api.dtos.InvoiceDto;
+import andrew.pettigrew.comprehensive_api.entities.Invoice;
+import andrew.pettigrew.comprehensive_api.jsonapi.InvoiceResource;
 import andrew.pettigrew.comprehensive_api.jsonapi.JsonApiConstants;
+import andrew.pettigrew.comprehensive_api.jsonapi.SingleResourceResponse;
 import andrew.pettigrew.comprehensive_api.jsonapi.requests.CreateRequest;
 import andrew.pettigrew.comprehensive_api.jsonapi.requests.InvoiceCreateRequest;
 import andrew.pettigrew.comprehensive_api.services.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +23,11 @@ public class InvoiceController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResponseEntity<InvoiceDto> createInvoice(final @RequestBody @Validated CreateRequest<InvoiceCreateRequest> requestData) {
+    public SingleResourceResponse<InvoiceResource> createInvoice(final @RequestBody @Validated CreateRequest<InvoiceCreateRequest> requestData) {
 
         InvoiceDto invoiceDto = requestData.getData().generateDto();
-//        Invoice createdInvoice = invoiceService.createInvoice(invoiceDto);
+        Invoice savedInvoice = invoiceService.createInvoice(invoiceDto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(invoiceDto);
+        return new SingleResourceResponse<>(InvoiceResource.toResource(savedInvoice));
     }
 }

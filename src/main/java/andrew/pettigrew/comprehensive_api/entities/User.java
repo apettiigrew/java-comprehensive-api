@@ -47,7 +47,7 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     Set<Authority> authorities;
 
-    @OneToMany(mappedBy ="user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy ="user", targetEntity = Invoice.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Invoice> invoices;
 
     @Column(name="enabled", nullable = false)

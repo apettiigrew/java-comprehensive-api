@@ -2,17 +2,20 @@ package andrew.pettigrew.comprehensive_api.services;
 
 import andrew.pettigrew.comprehensive_api.dtos.InvoiceDto;
 import andrew.pettigrew.comprehensive_api.entities.Invoice;
+import andrew.pettigrew.comprehensive_api.entities.User;
 import andrew.pettigrew.comprehensive_api.respositories.InvoiceRepository;
 import andrew.pettigrew.comprehensive_api.respositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
+@Transactional
 public class InvoiceService {
     @Autowired
     private InvoiceRepository invoiceRepository;
@@ -35,18 +38,10 @@ public class InvoiceService {
     }
 
     public Invoice createInvoice(InvoiceDto invoiceDto) {
-        Invoice invoice = modelMapper.map(invoiceDto,Invoice.class);
-        var user = invoice.getUser();
-        List<Invoice> userInvoices = user.getInvoices();
+        User user = userRepository.findByUuid(UUID.fromString(invoiceDto.getUserUuid())).orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (userInvoices == null) {
-            var listOfInvoice = new ArrayList<Invoice>();
-            listOfInvoice.add(invoice);
-            user.setInvoices(listOfInvoice);
-        } else {
-            userInvoices.add(invoice);
-            userRepository.save(user);
-        }
+        Invoice invoice = modelMapper.map(invoiceDto, Invoice.class);
+        invoice.setUser(user);
 
         return invoiceRepository.save(invoice);
     }
