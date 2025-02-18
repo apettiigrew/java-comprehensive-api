@@ -3,6 +3,7 @@ package andrew.pettigrew.comprehensive_api.controllers;
 import andrew.pettigrew.comprehensive_api.ResourceTypes;
 import andrew.pettigrew.comprehensive_api.dtos.InvoiceDto;
 import andrew.pettigrew.comprehensive_api.entities.Invoice;
+import andrew.pettigrew.comprehensive_api.enums.InvoiceStatus;
 import andrew.pettigrew.comprehensive_api.jsonapi.InvoiceResource;
 import andrew.pettigrew.comprehensive_api.jsonapi.JsonApiConstants;
 import andrew.pettigrew.comprehensive_api.jsonapi.MultipleResourceResponse;
@@ -42,8 +43,10 @@ public class InvoiceController {
     }
 
     @GetMapping
-    public MultipleResourceResponse<InvoiceResource> getAllInvoices(@PageableDefault(size = 10, direction = Sort.Direction.ASC) Pageable pageable) {
-        Page<Invoice> invoices = invoiceService.getAllInvoices(pageable);
+    public MultipleResourceResponse<InvoiceResource> getAllInvoices(
+            @PageableDefault(size = 10, direction = Sort.Direction.ASC) Pageable pageable,
+            @RequestParam(value = "status", required = false) InvoiceStatus status) {
+        Page<Invoice> invoices = invoiceService.getAllInvoices(pageable,status);
 
         final Page<InvoiceResource> invoiceResourcePage = new PageImpl<>(
                 invoices.getContent()
