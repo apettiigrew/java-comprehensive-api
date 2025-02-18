@@ -290,7 +290,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"data\": {\n        \"type\": \"invoices\",\n        \"attributes\": {\n            \"userUuid\": \"08054770-5525-4519-94d8-c845deecff1c\",\n             \"paymentDue\": \"2024-03-15\",\n             \"description\": \"Invoice for services rendered\",\n            \"paymentTerms\": 30,\n            \"clientName\": \"Acme Corporation\",\n            \"clientEmail\": \"info@acme.com\",\n            \"status\": \"DRAFT\",\n            \"total\": 1250.50,\n            \"senderAddress\": {\n                \"street\": \"123 Main St\",\n                \"city\": \"Anytown\",\n                \"state\": \"CA\",\n                \"zip\": \"91234\"\n            },\n            \"clientAddress\": {\n                \"street\": \"456 Oak Ave\",\n                \"city\": \"Springfield\",\n                \"state\": \"IL\",\n                \"zip\": \"62704\"\n            }\n        }\n    }\n}",
+							"raw": "{\n    \"data\": {\n        \"type\": \"invoices\",\n        \"attributes\": {\n            \"userUuid\": \"08054770-5525-4519-94d8-c845deecff1c\",\n             \"paymentDue\": \"2024-03-15\",\n            //  \"description\": \"Invoice for services rendered\",\n            // \"paymentTerms\": 30,\n            // \"clientName\": \"Acme Corporation\",\n            \"clientEmail\": \"info@acme.com\",\n            \"status\": \"DRAFT\",\n            \"total\": 1250.50,\n            \"senderAddress\": {\n                \"street\": \"123 Main St\",\n                \"city\": \"Anytown\",\n                \"state\": \"CA\",\n                \"zip\": \"91234\"\n            },\n            \"clientAddress\": {\n                \"street\": \"456 Oak Ave\",\n                \"city\": \"Springfield\",\n                \"state\": \"IL\",\n                \"zip\": \"62704\"\n            }\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -330,7 +330,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/invoices?page=0&size=10",
+							"raw": "{{base_url}}/invoices?page=0&size=10&status=PENDING",
 							"host": [
 								"{{base_url}}"
 							],
@@ -347,6 +347,10 @@
 									"key": "size",
 									"value": "10",
 									"description": "Number items on page."
+								},
+								{
+									"key": "status",
+									"value": "PENDING"
 								}
 							]
 						}
