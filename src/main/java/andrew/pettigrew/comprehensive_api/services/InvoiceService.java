@@ -3,6 +3,7 @@ package andrew.pettigrew.comprehensive_api.services;
 import andrew.pettigrew.comprehensive_api.dtos.InvoiceDto;
 import andrew.pettigrew.comprehensive_api.entities.Invoice;
 import andrew.pettigrew.comprehensive_api.entities.User;
+import andrew.pettigrew.comprehensive_api.exceptions.InvoiceNotFoundException;
 import andrew.pettigrew.comprehensive_api.respositories.InvoiceRepository;
 import andrew.pettigrew.comprehensive_api.respositories.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,7 +38,7 @@ public class InvoiceService {
     }
 
     public Invoice getInvoiceById(Integer id) {
-        return invoiceRepository.findById(id).orElseThrow(() -> new RuntimeException("Invoice not found"));
+        return invoiceRepository.findById(id).orElseThrow(() -> new InvoiceNotFoundException("Invoice ID "+id+" not found"));
     }
 
     public Invoice createInvoice(InvoiceDto invoiceDto) {
