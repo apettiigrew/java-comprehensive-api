@@ -11,6 +11,7 @@ import andrew.pettigrew.comprehensive_api.jsonapi.requests.CreateRequest;
 import andrew.pettigrew.comprehensive_api.jsonapi.requests.InvoiceCreateRequest;
 import andrew.pettigrew.comprehensive_api.jsonapi.requests.UpdateRequest;
 import andrew.pettigrew.comprehensive_api.services.InvoiceService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,10 +31,9 @@ public class InvoiceController {
     @Autowired
     InvoiceService invoiceService;
 
-
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public SingleResourceResponse<InvoiceResource> createInvoice(final @RequestBody @Validated CreateRequest<InvoiceCreateRequest> requestData) {
+    public SingleResourceResponse<InvoiceResource> createInvoice(final @Valid @RequestBody CreateRequest<InvoiceCreateRequest> requestData) {
 
         InvoiceDto invoiceDto = requestData.getData().generateDto();
         Invoice savedInvoice = invoiceService.createInvoice(invoiceDto);
